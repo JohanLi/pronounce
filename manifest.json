@@ -1,0 +1,39 @@
+{
+  "name": "dictionary",
+  "description": "",
+  "version": "0.0.1",
+  "manifest_version": 3,
+  "background": {
+    "service_worker": "serviceWorker.js"
+  },
+  "content_scripts": [
+    {
+      "matches": ["https://*/*"],
+      "js": ["index.js"]
+    }
+  ],
+  "permissions": ["contextMenus", "scripting", "activeTab"],
+  "action": {
+    "default_icon": {
+      "16": "/pronounce.png",
+      "32": "/pronounce.png",
+      "48": "/pronounce.png",
+      "128": "/pronounce.png"
+    }
+  },
+  "icons": {
+    "16": "/pronounce.png",
+    "32": "/pronounce.png",
+    "48": "/pronounce.png",
+    "128": "/pronounce.png"
+  },
+  "commands": {
+    "Ctrl+M": {
+      "suggested_key": {
+        "default": "Ctrl+M",
+        "mac": "Command+M"
+      },
+      "description": "Ctrl+M"
+    }
+  }
+}

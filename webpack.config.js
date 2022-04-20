@@ -8,6 +8,7 @@ module.exports = {
   entry: {
     index: './src/index.js',
     serviceWorker: './src/serviceWorker.js',
+    iframe: './src/iframe.js',
   },
   output: {
     path: path.resolve(__dirname, 'dist'),
@@ -18,6 +19,7 @@ module.exports = {
       patterns: [
         { from: './manifest.json', to: './' },
         { from: './pronounce.png', to: './' },
+        { from: './src/iframe.html', to: './' },
       ],
     }),
   ],

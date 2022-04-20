@@ -35,5 +35,11 @@
       },
       "description": "Ctrl+M"
     }
-  }
+  },
+  "web_accessible_resources": [
+    {
+      "resources": [ "iframe.html" ],
+      "matches": ["https://*/*"]
+    }
+  ]
 }

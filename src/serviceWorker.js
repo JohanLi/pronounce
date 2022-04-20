@@ -15,10 +15,7 @@ chrome.contextMenus.onClicked.addListener(async (info, tab) => {
     return;
   }
 
-  const response = await fetch(`https://dictionary.cambridge.org/dictionary/english/${selectionText}`);
-  const html = await response.text();
-
-  chrome.tabs.sendMessage(tab.id, html);
+  chrome.tabs.sendMessage(tab.id, selectionText);
 })
 
 chrome.commands.onCommand.addListener((shortcut) => {

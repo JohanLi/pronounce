@@ -12,7 +12,7 @@
       "js": ["index.js"]
     }
   ],
-  "permissions": ["contextMenus", "scripting", "activeTab"],
+  "permissions": ["contextMenus", "scripting", "activeTab", "storage"],
   "action": {
     "default_icon": {
       "16": "/pronounce.png",

@@ -1,31 +1,26 @@
-/*
-  Limitations that have been worked around:
-  - Audio cannot be played in a service worker
-  - DOMParser cannot be run in a service worker
-  - Websites can have content security policies set —  we're injecting an
-    iframe to get around this issue. Otherwise, neither fetch nor audio
-    can be used.
- */
+import Elements from './elements';
 
-const iframe = document.createElement('iframe');
-iframe.src = chrome.runtime.getURL('iframe.html');
-
-/*
-  Audio won't play in Chrome unless a user has interacted with a page.
-  https://developer.chrome.com/blog/autoplay/#iframe-delegation
- */
-iframe.allow = 'autoplay';
-
-iframe.style.visibility = 'hidden;';
-iframe.style.width = '0';
-iframe.style.height = '0';
-
-document.body.appendChild(iframe);
+const position = { x: 0, y: 0 };
+const elements = Elements;
 
 // https://developer.chrome.com/docs/extensions/mv3/messaging/#simple
-chrome.runtime.onMessage.addListener((word, sender, sendResponse) => {
-  // TODO figure out targetOrigin
-  iframe.contentWindow.postMessage(word, '*');
+chrome.runtime.onMessage.addListener(async (word, sender, sendResponse) => {
+  await elements.init(position);
+  elements.postMessage(word);
 
   sendResponse({});
+});
+
+function onPlay(src) {
+  const speed = elements.getSpeed();
+  elements.postMessage({ action: 'play', src, speed });
+}
+
+window.onmessage = (e) => {
+  Elements.update(position, e.data, onPlay);
+};
+
+document.addEventListener('contextmenu', (event) => {
+  position.x = event.clientX;
+  position.y = event.clientY;
 });

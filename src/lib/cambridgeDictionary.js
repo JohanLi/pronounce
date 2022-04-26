@@ -18,12 +18,22 @@ export async function getPronunciations(word) {
 
   setBaseUrl(document);
 
-  const audioElements = document.querySelectorAll('amp-audio');
+  const pronunciationNodes = document.querySelectorAll('.pos-header')[0].querySelectorAll('.dpron-i');
 
-  const pronunciations = {
-    uk: audioElements[0].querySelector('source[type="audio/ogg"]').src,
-    us: audioElements[1].querySelector('source[type="audio/ogg"]').src,
-  };
+  const pronunciations = { us: [], uk: [] };
+
+  for (let i = 0; i < pronunciationNodes.length; i += 1) {
+    const src = pronunciationNodes[i].querySelector('source[type="audio/ogg"]').src;
+    const ipa = pronunciationNodes[i].querySelector('.ipa').textContent;
+
+    if (pronunciationNodes[i].classList.contains('uk')) {
+      pronunciations.uk.push({ src, ipa });
+    }
+
+    if (pronunciationNodes[i].classList.contains('us')) {
+      pronunciations.us.push({ src, ipa });
+    }
+  }
 
   return pronunciations;
 }

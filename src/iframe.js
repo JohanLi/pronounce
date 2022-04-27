@@ -26,7 +26,7 @@ window.addEventListener('message', async (message) => {
 
   if (!pronunciations) {
     pronunciations = await getPronunciations(word);
-    await Cache.set(word, pronunciations.us[0].src);
+    await Cache.set(word, pronunciations);
   }
 
   audio.src = pronunciations.us[0].src;

@@ -1,14 +1,17 @@
 const Cache = {
-  get: (key) => new Promise((resolve) => {
-    chrome.storage.local.get([key], (result) => {
-      resolve(result[key]);
-    })
-  }),
-  set: (key, value) => new Promise((resolve) => {
-    chrome.storage.local.set({ [key]: value }, () => {
-      resolve();
-    });
-  }),
+  get: async (key) => {
+    const { value, expireAfter } = (await chrome.storage.local.get(key))[key] || {};
+
+    if (!value || new Date().getTime() >= expireAfter) {
+      return undefined;
+    }
+
+    return value;
+  },
+  set: (key, value, expireSeconds = 3600) => {
+    const expireAfter = new Date().getTime() + expireSeconds * 1000;
+    return chrome.storage.local.set({ [key]: { value, expireAfter } });
+  },
 }
 
 export default Cache;

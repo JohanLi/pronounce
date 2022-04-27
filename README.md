@@ -1,4 +1,3 @@
-# Dictionary
+# Pronounce
 
-A work-in-progress Chrome extension to pronounce words and look them up in
-the dictionary.
+A work-in-progress Chrome extension that lets you right-click words to hear their pronunciations.

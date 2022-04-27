@@ -1,4 +1,12 @@
-import { createPopper } from '@popperjs/core';
+import {
+  createPopper,
+  Instance as PopperInstance, VirtualElement,
+} from '@popperjs/core';
+
+import { Pronunciations } from './lib/cambridgeDictionary';
+import { Message, speed, Speed } from './iframe';
+
+export type Position = { x: number; y: number };
 
 /*
   Limitations that have been worked around:
@@ -16,27 +24,15 @@ import { createPopper } from '@popperjs/core';
  */
 
 let initialized = false;
-let plugin;
-let tooltipContent;
-let popperInstance;
-let popperVirtualElement;
-let iframe;
-let tooltip;
+let plugin: HTMLDivElement;
+let tooltipContent: HTMLDivElement;
+let popperInstance: PopperInstance;
+let iframe: HTMLIFrameElement;
+let tooltip: HTMLDivElement;
 
 const Tooltip = {
-  create: (position) => new Promise((resolve) => {
+  create: (position: Position) => new Promise<void>((resolve) => {
     const { x, y } = position;
-
-    popperVirtualElement = {
-      getBoundingClientRect: () => ({
-        width: 0,
-        height: 0,
-        top: y,
-        right: x,
-        bottom: y,
-        left: x,
-      }),
-    };
 
     if (initialized) {
       Tooltip.remove();
@@ -123,7 +119,18 @@ const Tooltip = {
     shadow.appendChild(tooltip);
     shadow.appendChild(iframe);
 
-    popperInstance = createPopper(popperVirtualElement, tooltip, {
+    const virtualElement = {
+      getBoundingClientRect: () => ({
+        width: 0,
+        height: 0,
+        top: y,
+        right: x,
+        bottom: y,
+        left: x,
+      }),
+    } as VirtualElement; // without casting, some additional properties that aren't used must be added
+
+    popperInstance = createPopper(virtualElement, tooltip, {
       modifiers: [
         {
           name: 'offset',
@@ -150,7 +157,7 @@ const Tooltip = {
       resolve();
     };
   }),
-  update: (position, pronunciations, onPlay) => {
+  update: (position: Position, pronunciations: Pronunciations, onPlay: (src: string) => void) => {
     tooltipContent.innerHTML = `
       <div>
         <div style="display: flex">
@@ -189,17 +196,29 @@ const Tooltip = {
     const buttonNodes = tooltipContent.querySelectorAll('button');
 
     Array.from(buttonNodes).forEach((button) => {
-      button.addEventListener('click', (e) => onPlay(e.target.dataset.src));
+      button.addEventListener('click', (e) => {
+        if (!(e.target instanceof HTMLButtonElement)) {
+          return;
+        }
+
+        onPlay(e.target.dataset.src)
+      });
     });
 
-    popperInstance.update();
+    return popperInstance.update();
   },
-  postMessage: (data) => {
+  postMessage: (message: Message) => {
     // TODO figure out targetOrigin
-    iframe.contentWindow.postMessage(data, '*');
+    iframe.contentWindow.postMessage(message, '*');
   },
   getSpeed: () => {
-    return tooltipContent.querySelector('input[name="speed"]:checked').value;
+    const value = tooltipContent.querySelector<HTMLInputElement>('input[name="speed"]:checked').value as unknown;
+
+    if (!speed.find((s) => s === value)) {
+      throw Error('Value is not one of the known speeds');
+    }
+
+    return value as Speed;
   },
   remove: () => {
     initialized = false;

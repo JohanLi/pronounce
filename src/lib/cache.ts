@@ -4,7 +4,7 @@
  */
 
 const Cache = {
-  get: async (key) => {
+  get: async (key: string) => {
     const { value, expireAfter } = (await chrome.storage.local.get(key))[key] || {};
 
     if (!value || new Date().getTime() >= expireAfter) {
@@ -13,7 +13,7 @@ const Cache = {
 
     return value;
   },
-  set: (key, value, expireSeconds = 3600) => {
+  set: (key: string, value: any, expireSeconds = 3600) => {
     const expireAfter = new Date().getTime() + expireSeconds * 1000;
     return chrome.storage.local.set({ [key]: { value, expireAfter } });
   },

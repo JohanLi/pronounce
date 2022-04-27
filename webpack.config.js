@@ -6,9 +6,21 @@ module.exports = {
   devtool: 'inline-source-map',
   watch: true,
   entry: {
-    index: './src/index.js',
-    serviceWorker: './src/serviceWorker.js',
-    iframe: './src/iframe.js',
+    index: './src',
+    serviceWorker: './src/serviceWorker',
+    iframe: './src/iframe',
+  },
+  module: {
+    rules: [
+      {
+        test: /\.ts$/,
+        use: 'ts-loader',
+        exclude: /node_modules/,
+      },
+    ],
+  },
+  resolve: {
+    extensions: ['.ts', '.js'],
   },
   output: {
     path: path.resolve(__dirname, 'dist'),

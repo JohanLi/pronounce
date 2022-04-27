@@ -1,3 +1,8 @@
+/*
+  The API of chrome.storage.local.get seems peculiar in the sense that one
+  has to essentially access the key twice.
+ */
+
 const Cache = {
   get: async (key) => {
     const { value, expireAfter } = (await chrome.storage.local.get(key))[key] || {};

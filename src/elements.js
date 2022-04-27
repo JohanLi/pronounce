@@ -125,6 +125,10 @@ const Elements = {
             offset: [0, 20],
           },
         },
+        {
+          name: 'eventListeners',
+          options: { scroll: false },
+        },
       ],
     });
 

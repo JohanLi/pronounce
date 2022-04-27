@@ -8,7 +8,7 @@ chrome.runtime.onMessage.addListener(async (word, sender, sendResponse) => {
   await elements.init(position);
   elements.postMessage(word);
 
-  sendResponse({});
+  sendResponse({}); // https://stackoverflow.com/a/71520415
 });
 
 function onPlay(src) {

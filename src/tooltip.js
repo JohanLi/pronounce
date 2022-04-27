@@ -4,9 +4,15 @@ import { createPopper } from '@popperjs/core';
   Limitations that have been worked around:
   - Audio cannot be played in a service worker
   - DOMParser cannot be run in a service worker
-  - Websites can have content security policies set —  we're injecting an
+  - Websites can have content security policies set — we're injecting an
     iframe to get around this issue. Otherwise, neither fetch nor audio
     can be used.
+ */
+
+/*
+  For simplicity's sake, the entire tooltip and its wrapper is removed and
+  remounted when looking up a new word. A smarter solution is to  update the
+  tooltip position and content.
  */
 
 let initialized = false;
@@ -17,8 +23,8 @@ let popperVirtualElement;
 let iframe;
 let tooltip;
 
-const Elements = {
-  init: (position) => new Promise((resolve) => {
+const Tooltip = {
+  create: (position) => new Promise((resolve) => {
     const { x, y } = position;
 
     popperVirtualElement = {
@@ -33,10 +39,10 @@ const Elements = {
     };
 
     if (initialized) {
-      popperInstance.update();
-      resolve();
-      return;
+      Tooltip.remove();
     }
+
+    initialized = true;
 
     plugin = document.createElement('div');
     document.body.appendChild(plugin);
@@ -136,7 +142,7 @@ const Elements = {
       const clickOutside = !e.composedPath().includes(tooltip);
 
       if (clickOutside) {
-        Elements.hide();
+        Tooltip.remove();
       }
     })
 
@@ -195,10 +201,10 @@ const Elements = {
   getSpeed: () => {
     return tooltipContent.querySelector('input[name="speed"]:checked').value;
   },
-  hide: () => {
-    plugin.remove();
+  remove: () => {
     initialized = false;
+    plugin.remove();
   },
 }
 
-export default Elements;
+export default Tooltip;

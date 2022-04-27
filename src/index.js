@@ -1,23 +1,23 @@
-import Elements from './elements';
+import Tooltip from './tooltip';
 
 const position = { x: 0, y: 0 };
-const elements = Elements;
+const tooltip = Tooltip;
 
 // https://developer.chrome.com/docs/extensions/mv3/messaging/#simple
 chrome.runtime.onMessage.addListener(async (word, sender, sendResponse) => {
-  await elements.init(position);
-  elements.postMessage(word);
+  await tooltip.create(position);
+  tooltip.postMessage(word);
 
   sendResponse({}); // https://stackoverflow.com/a/71520415
 });
 
 function onPlay(src) {
-  const speed = elements.getSpeed();
-  elements.postMessage({ action: 'play', src, speed });
+  const speed = tooltip.getSpeed();
+  tooltip.postMessage({ action: 'play', src, speed });
 }
 
 window.onmessage = (e) => {
-  Elements.update(position, e.data, onPlay);
+  Tooltip.update(position, e.data, onPlay);
 };
 
 document.addEventListener('contextmenu', (event) => {
